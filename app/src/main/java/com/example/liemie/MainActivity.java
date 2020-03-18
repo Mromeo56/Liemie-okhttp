@@ -1,44 +1,65 @@
 package com.example.liemie;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import java.util.List;
+import java.util.ArrayList;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
-import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.textclassifier.TextLinks;
-import android.widget.TextView;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoginFragment.OnFragmentInteractionListener{
 
     private TextView mTextViewResult;
     private OkHttpClient client;
+    private Fragment login;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
+        login.getView().setVisibility(View.GONE);
+
+        Button bOk=(Button) login.getView().findViewById(R.id.button_login);
+        bOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getApplicationContext(),    "clic sur ok", Toast.LENGTH_SHORT
+                ).show();
+            }
+        });
+        Button bCancel=(Button) login.getView().findViewById(R.id.button_cancel);
+        bCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                login.getView().setVisibility(View.GONE);
+            }
+        });
+
         OkHttpClient client = new OkHttpClient();
 
        mTextViewResult = findViewById(R.id.textview_result);
 
-        String url = "http://waraliens.ddns.net/api/";
+        /*String url = "http://waraliens.ddns.net/api/";
+        //http://www.btssio-carcouet.fr/ppe4/public/connect2/
 
         MyThread myThread = new MyThread();
 
@@ -48,21 +69,15 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -72,17 +87,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void OnFragmentInteraction(Uri uri){
+
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_connexion:
+                login.getView().setVisibility(View.VISIBLE);
+                return true;
+            case R.id.action_export:
+                Toast.makeText(getApplicationContext(),	"clic sur act2",Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_import:
+                Toast.makeText(getApplicationContext(),	"clic sur act3",Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_liste_rdv:
+                Toast.makeText(getApplicationContext(),	"clic sur act4",Toast.LENGTH_SHORT).show();
+                return true;
+            case R.id.action_settings:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-
-        return super.onOptionsItemSelected(item);
     }
 }
