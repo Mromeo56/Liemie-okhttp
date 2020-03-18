@@ -1,11 +1,15 @@
 package com.example.liemie;
 
+import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,8 +20,10 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import okhttp3.OkHttpClient;
@@ -29,10 +35,14 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
     private OkHttpClient client;
     private Fragment login;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
 
 
         login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
@@ -42,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
         bOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                EditText id;
+                EditText mdp;
+                id = findViewById(R.id.editText_id);
+                mdp = findViewById(R.id.editText_password);
                 Toast.makeText(getApplicationContext(),    "clic sur ok", Toast.LENGTH_SHORT
                 ).show();
             }
@@ -55,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
         });
 
         OkHttpClient client = new OkHttpClient();
-
-       mTextViewResult = findViewById(R.id.textview_result);
 
         /*String url = "http://waraliens.ddns.net/api/";
         //http://www.btssio-carcouet.fr/ppe4/public/connect2/
@@ -76,8 +88,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
         setSupportActionBar(toolbar);
 
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -105,8 +115,6 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
                 return true;
             case R.id.action_liste_rdv:
                 Toast.makeText(getApplicationContext(),	"clic sur act4",Toast.LENGTH_SHORT).show();
-                return true;
-            case R.id.action_settings:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
