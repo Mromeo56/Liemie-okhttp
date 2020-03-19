@@ -17,10 +17,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import okhttp3.OkHttpClient;
 
 
 public class MainActivity extends AppCompatActivity {
+    // utilCourant
+    private Utilisateur utilCourant;
 
     // OkHttp
     private OkHttpClient client;
@@ -31,9 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private Button login_connec;
     private Button login_cancel;
     // // login EditText
-    private EditText login_util;
+    private EditText login_email;
     private EditText login_password;
 
+    // profil frgm
+    private Fragment frgm_profil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +56,16 @@ public class MainActivity extends AppCompatActivity {
         frgm_login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
         frgm_login.getView().setVisibility(View.GONE);
         // // login EditText
-        login_util = (EditText) frgm_login.getView().findViewById(R.id.login_util);
+        login_email = (EditText) frgm_login.getView().findViewById(R.id.login_util);
         login_password = (EditText) frgm_login.getView().findViewById(R.id.login_password);
         // // login button
         login_connec = (Button) frgm_login.getView().findViewById(R.id.login_connec);
         login_connec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (login_util.length() > 2 && login_password.length() > 2) {
-                    connexion(login_util.getText().toString(), login_password.getText().toString());
-                }
-                else {
+                if (login_email.length() > 2 && login_password.length() > 2) {
+                    connexion(login_email.getText().toString(), login_password.getText().toString());
+                } else {
                     AlertMsg(getString(R.string.general_error), getString(R.string.login_entryError));
                 }
             }
@@ -70,23 +77,29 @@ public class MainActivity extends AppCompatActivity {
                 frgm_login.getView().setVisibility(View.GONE);
             }
         });
+
+        // profil frgm
+        //frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.);
     }
 
     private boolean connexion(String userName, String password) {
-        OkHttpClient client = new OkHttpClient();
-
-        String url = "http://waraliens.ddns.net/api/";
+        String url = "http://waraliens.ddns.net/api/user";
 
         MyThread myThread = new MyThread();
 
         try {
-            AlertMsg("test", myThread.execute(url).get());
+            JSONArray lesUtil = new JSONArray(myThread.execute(url).get());
+            JSONObject util = lesUtil.getJSONObject(0);
+            utilCourant = new Utilisateur(util.getInt("id"), util.getString("mail"), util.getString("password"));
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
+        AlertMsg("test", utilCourant.getMail());
         return true;
     }
 
@@ -117,13 +130,13 @@ public class MainActivity extends AppCompatActivity {
                 frgm_login.getView().setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_export:
-                Toast.makeText(getApplicationContext(),	"clic sur act2",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "clic sur act2", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_import:
-                Toast.makeText(getApplicationContext(),	"clic sur act3",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "clic sur act3", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_liste_rdv:
-                Toast.makeText(getApplicationContext(),	"clic sur act4",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "clic sur act4", Toast.LENGTH_SHORT).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
