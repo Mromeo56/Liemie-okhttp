@@ -89,8 +89,13 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             JSONArray lesUtil = new JSONArray(myThread.execute(url).get());
-            JSONObject util = lesUtil.getJSONObject(0);
-            utilCourant = new Utilisateur(util.getInt("id"), util.getString("mail"), util.getString("password"));
+            for (int i = 0; i < lesUtil.length(); i++) {
+                JSONObject util = lesUtil.getJSONObject(i);
+                if (util.getString("mail").equals(userName) && util.getString("password").equals(password)) {
+                    utilCourant = new Utilisateur(util.getInt("id"), util.getString("mail"), util.getString("password"));
+                    break;
+                }
+            }
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -99,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        AlertMsg("test", utilCourant.getMail());
         return true;
     }
 
