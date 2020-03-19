@@ -1,39 +1,38 @@
 package com.example.liemie;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import okhttp3.OkHttpClient;
 
 
-public class MainActivity extends AppCompatActivity implements LoginFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextViewResult;
+    // OkHttp
     private OkHttpClient client;
-    private Fragment login;
+
+    // login frgm
+    private Fragment frgm_login;
+    // // login Button
+    private Button login_connec;
+    private Button login_cancel;
+    // // login EditText
+    private EditText login_util;
+    private EditText login_password;
 
 
     @Override
@@ -41,52 +40,67 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-
-
-
-        login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
-        login.getView().setVisibility(View.GONE);
-
-        Button bOk=(Button) login.getView().findViewById(R.id.button_login);
-        bOk.setOnClickListener(new View.OnClickListener() {
+        // login frgm
+        frgm_login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
+        frgm_login.getView().setVisibility(View.GONE);
+        // // login EditText
+        login_util = (EditText) frgm_login.getView().findViewById(R.id.login_util);
+        login_password = (EditText) frgm_login.getView().findViewById(R.id.login_password);
+        // // login button
+        login_connec = (Button) frgm_login.getView().findViewById(R.id.login_connec);
+        login_connec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText id;
-                EditText mdp;
-                id = findViewById(R.id.editText_id);
-                mdp = findViewById(R.id.editText_password);
-                Toast.makeText(getApplicationContext(),    "clic sur ok", Toast.LENGTH_SHORT
-                ).show();
+                if (login_util.length() > 2 && login_password.length() > 2) {
+                    connexion(login_util.getText().toString(), login_password.getText().toString());
+                }
+                else {
+                    AlertMsg(getString(R.string.general_error), getString(R.string.login_entryError));
+                }
             }
         });
-        Button bCancel=(Button) login.getView().findViewById(R.id.button_cancel);
-        bCancel.setOnClickListener(new View.OnClickListener() {
+        login_cancel = (Button) frgm_login.getView().findViewById(R.id.login_cancel);
+        login_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                login.getView().setVisibility(View.GONE);
+                frgm_login.getView().setVisibility(View.GONE);
             }
         });
+    }
 
+    private boolean connexion(String userName, String password) {
         OkHttpClient client = new OkHttpClient();
 
-        /*String url = "http://waraliens.ddns.net/api/";
-        //http://www.btssio-carcouet.fr/ppe4/public/connect2/
+        String url = "http://waraliens.ddns.net/api/";
 
         MyThread myThread = new MyThread();
 
         try {
-            mTextViewResult.setText(myThread.execute(url).get());
+            AlertMsg("test", myThread.execute(url).get());
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }*/
+        }
 
+        return true;
+    }
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public void AlertMsg(String title, String msg) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle(title).setMessage(msg);
+        builder.setPositiveButton(R.string.general_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
 
+            }
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -97,15 +111,10 @@ public class MainActivity extends AppCompatActivity implements LoginFragment.OnF
     }
 
     @Override
-    public void OnFragmentInteraction(Uri uri){
-
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_connexion:
-                login.getView().setVisibility(View.VISIBLE);
+                frgm_login.getView().setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_export:
                 Toast.makeText(getApplicationContext(),	"clic sur act2",Toast.LENGTH_SHORT).show();
