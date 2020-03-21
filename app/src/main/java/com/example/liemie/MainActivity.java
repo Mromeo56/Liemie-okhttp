@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // profil frgm
-        //frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.);
+        // frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.);
     }
 
     private boolean connexion(String userName, String password) {
