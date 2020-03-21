@@ -84,13 +84,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // rendez-vous act
-
-
-
-
-
-
         // profil frgm
         // frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.);
     }
