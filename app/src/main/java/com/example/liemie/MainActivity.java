@@ -1,5 +1,6 @@
 package com.example.liemie;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,8 +32,13 @@ public class MainActivity extends AppCompatActivity {
     // OkHttp
     private OkHttpClient client;
 
+    //frgm_rdv
+    private Fragment frgm_rdv;
+    private Button btn_rdv;
+
     // login frgm
     private Fragment frgm_login;
+
     // // login Button
     private Button login_connec;
     private Button login_cancel;
@@ -77,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
                 frgm_login.getView().setVisibility(View.GONE);
             }
         });
+
+        // rendez-vous act
+
+
+
+
+
 
         // profil frgm
         // frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.);
@@ -140,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "clic sur act3", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_liste_rdv:
-                Toast.makeText(getApplicationContext(), "clic sur act4", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, RendezVousActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
