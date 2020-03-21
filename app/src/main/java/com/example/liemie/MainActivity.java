@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText login_email;
     private EditText login_password;
 
-    // profil frgm/
+    // profil frgm
     private Fragment frgm_profil;
 
     @Override

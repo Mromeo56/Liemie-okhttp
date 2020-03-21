@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Liemie</string>
+    <string name="action_profil">Profil</string>
+    <string name="action_liste_rdv">Mes rendez-vous</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_connexion">Connexion</string>
+    <string name="action_import">Importer les données</string>
+    <string name="action_export">Exporter les données</string>
+
+    <string name="general_ok">Ok</string>
+    <string name="general_cancel">Annuler</string>
+    <string name="general_error">Erreur</string>
+
+    <string name="login_title">Connexion</string>
+    <string name="login_mail">Mail</string>
+    <string name="login_password">Mot de passe</string>
+    <string name="login_connect">Connexion</string>
+    <string name="login_cancel">Annuler</string>
+    <string name="login_entryError">Les entrées ne sont pas valides</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
