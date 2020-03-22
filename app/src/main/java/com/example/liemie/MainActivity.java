@@ -1,12 +1,18 @@
 package com.example.liemie;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.concurrent.ExecutionException;
@@ -14,8 +20,10 @@ import java.util.concurrent.ExecutionException;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import org.json.JSONArray;
@@ -26,19 +34,27 @@ import okhttp3.OkHttpClient;
 
 
 public class MainActivity extends AppCompatActivity {
+    // SharedPref
+    SharedPreferences sharedPreferences;
+    public static final String PREF_NAME = "identifier";
+
+    // toolBar
+    private Toolbar toolbar;
+    // // toolBar menu
+    private MenuItem menuConnec;
+    private MenuItem menuExport;
+    private MenuItem menuImport;
+    private MenuItem menuList;
+    private MenuItem menuInfo;
+
     // utilCourant
     private Utilisateur utilCourant;
 
     // OkHttp
     private OkHttpClient client;
 
-    //frgm_rdv
-    private Fragment frgm_rdv;
-    private Button btn_rdv;
-
     // login frgm
     private Fragment frgm_login;
-
     // // login Button
     private Button login_connec;
     private Button login_cancel;
@@ -48,15 +64,24 @@ public class MainActivity extends AppCompatActivity {
 
     // profil frgm
     private Fragment frgm_profil;
+    // // profil TextView
+    private TextView profil_id;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        // toolBar
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // permissions
+        checkPermission();
+
+        // SharedPred Init
+        sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
 
         // login frgm
         frgm_login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
@@ -84,12 +109,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         // profil frgm
-        // frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.);
+        frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.profil_frgm);
+        frgm_profil.getView().setVisibility(View.GONE);
+
+        // auto Connexion
+        if (sharedPreferences.getString("username", "") != "" && sharedPreferences.getString("password", "") != "") {
+            connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("password", ""));
+        }
     }
 
     private boolean connexion(String userName, String password) {
-        String url = "http://waraliens.ddns.net/api/user";
+        String url = "http://waraliens.ddns.net/api/user/";
 
         MyThread myThread = new MyThread();
 
@@ -99,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 JSONObject util = lesUtil.getJSONObject(i);
                 if (util.getString("mail").equals(userName) && util.getString("password").equals(password)) {
                     utilCourant = new Utilisateur(util.getInt("id"), util.getString("mail"), util.getString("password"));
+                    InitConnexion();
                     break;
                 }
             }
@@ -111,6 +144,39 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return true;
+    }
+
+    public void InitConnexion() {
+        // instantiate sharedPref
+        if(sharedPreferences.getString("username", "").isEmpty() && sharedPreferences.getString("password", "").isEmpty()) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("username", utilCourant.getMail());
+            editor.putString("password", utilCourant.getPassWord());
+        }
+
+        // toolBar menu
+        LogMenu();
+
+        // // profil TextView
+        profil_id = (TextView) frgm_profil.getView().findViewById(R.id.profil_id);
+        profil_id.setText(utilCourant.getMail());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) == true && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == true && shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) == true) {
+            } else {
+                askForPermission();
+            }
+        } else {
+            return;
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void askForPermission() {
+        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
     }
 
     public void AlertMsg(String title, String msg) {
@@ -126,6 +192,32 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
+    public void HiddenAllFrgm() {
+        frgm_profil.getView().setVisibility(View.GONE);
+        frgm_login.getView().setVisibility(View.GONE);
+    }
+
+    public void NoLogMenu() {
+        menuConnec.setVisible(true);
+        menuExport.setVisible(false);
+        menuImport.setVisible(false);
+        menuList.setVisible(false);
+        menuInfo.setVisible(false);
+    }
+
+    public void LogMenu() {
+        menuConnec = toolbar.getMenu().findItem(R.id.action_connexion);
+        menuExport = toolbar.getMenu().findItem(R.id.action_export);
+        menuImport = toolbar.getMenu().findItem(R.id.action_import);
+        menuList = toolbar.getMenu().findItem(R.id.action_liste_rdv);
+        menuInfo = toolbar.getMenu().findItem(R.id.action_profil);
+        menuConnec.setVisible(false);
+        menuExport.setVisible(true);
+        menuImport.setVisible(true);
+        menuList.setVisible(true);
+        menuInfo.setVisible(true);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -136,7 +228,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_profil:
+                HiddenAllFrgm();
+                frgm_profil.getView().setVisibility(View.VISIBLE);
+                return true;
             case R.id.action_connexion:
+                HiddenAllFrgm();
                 frgm_login.getView().setVisibility(View.VISIBLE);
                 return true;
             case R.id.action_export:
@@ -146,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "clic sur act3", Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_liste_rdv:
+                HiddenAllFrgm();
                 startActivity(new Intent(this, RendezVousActivity.class));
                 return true;
             default:

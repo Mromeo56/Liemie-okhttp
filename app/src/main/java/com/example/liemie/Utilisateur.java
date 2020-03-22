@@ -12,6 +12,10 @@ public class Utilisateur {
     }
 
     public String getMail() {
-        return mail;
+        return this.mail;
+    }
+
+    public String getPassWord() {
+        return this.passWord;
     }
 }

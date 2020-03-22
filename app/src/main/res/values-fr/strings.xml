@@ -18,6 +18,10 @@
     <string name="login_cancel">Annuler</string>
     <string name="login_entryError">Les entrées ne sont pas valides</string>
 
+    <string name="profil_title">Profil</string>
+    <string name="profil_idText">Identifiant</string>
+    <string name="profil_mdp">Mot de passe</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

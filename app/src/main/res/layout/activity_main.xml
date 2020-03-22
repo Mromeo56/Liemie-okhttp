@@ -31,11 +31,18 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@android:drawable/ic_dialog_email" />
+        android:tint="@android:color/white"
+        app:srcCompat="@drawable/disconnect" />
 
     <fragment
         android:id="@+id/login_frgm"
         android:name="com.example.liemie.LoginFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <fragment
+        android:id="@+id/profil_frgm"
+        android:name="com.example.liemie.ProfilFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
