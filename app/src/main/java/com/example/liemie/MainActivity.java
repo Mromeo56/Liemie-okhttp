@@ -1,6 +1,7 @@
 package com.example.liemie;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,8 +37,8 @@ import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
     // SharedPref
-    SharedPreferences sharedPreferences;
     public static final String PREF_NAME = "identifier";
+    private SharedPreferences sharedPreferences;
 
     // toolBar
     private Toolbar toolbar;
@@ -80,8 +82,9 @@ public class MainActivity extends AppCompatActivity {
         // permissions
         checkPermission();
 
-        // SharedPred Init
+        // SharedPref Init
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+
 
         // login frgm
         frgm_login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
@@ -113,11 +116,6 @@ public class MainActivity extends AppCompatActivity {
         // profil frgm
         frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.profil_frgm);
         frgm_profil.getView().setVisibility(View.GONE);
-
-        // auto Connexion
-        if (sharedPreferences.getString("username", "") != "" && sharedPreferences.getString("password", "") != "") {
-            connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("password", ""));
-        }
     }
 
     private boolean connexion(String userName, String password) {
@@ -148,14 +146,16 @@ public class MainActivity extends AppCompatActivity {
 
     public void InitConnexion() {
         // instantiate sharedPref
-        if(sharedPreferences.getString("username", "").isEmpty() && sharedPreferences.getString("password", "").isEmpty()) {
+        if(sharedPreferences.getString("username", "") == "" && sharedPreferences.getString("password", "") == "") {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("username", utilCourant.getMail());
             editor.putString("password", utilCourant.getPassWord());
+            editor.commit();
         }
 
-        // toolBar menu
+        // hide function
         LogMenu();
+        HiddenAllFrgm();
 
         // // profil TextView
         profil_id = (TextView) frgm_profil.getView().findViewById(R.id.profil_id);
@@ -234,7 +234,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_connexion:
                 HiddenAllFrgm();
-                frgm_login.getView().setVisibility(View.VISIBLE);
+                // semi-auto Connexion
+                if (sharedPreferences.getString("username", "") != "" && sharedPreferences.getString("password", "") != "") {
+                    connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("password", ""));
+                }
+                else {
+                    frgm_login.getView().setVisibility(View.VISIBLE);
+                }
                 return true;
             case R.id.action_export:
                 Toast.makeText(getApplicationContext(), "clic sur act2", Toast.LENGTH_SHORT).show();
