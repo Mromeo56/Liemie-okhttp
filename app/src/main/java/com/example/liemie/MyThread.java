@@ -15,6 +15,6 @@ public class MyThread extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }
 
-        return "Bug";
+        return "BugOkHTTP";
     }
 }

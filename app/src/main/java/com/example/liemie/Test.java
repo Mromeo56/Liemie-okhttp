@@ -11,8 +11,10 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
@@ -21,6 +23,18 @@ import okhttp3.Response;
 public class Test {
 
     OkHttpClient client = new OkHttpClient();
+    MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+    /*public String run(String url) throws IOException {
+        RequestBody body = RequestBody.create(JSON, "test");
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }*/
 
     public String run(String url) throws IOException {
         Request request = new Request.Builder()

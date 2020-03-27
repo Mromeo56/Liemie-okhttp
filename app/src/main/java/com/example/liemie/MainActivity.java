@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
@@ -27,6 +29,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+
+import com.example.liemie.http.Async;
+import com.example.liemie.http.Http;
+import com.example.liemie.http.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
     // OkHttp
     private OkHttpClient client;
 
+    //Http
+    private Response response;
+
     // login frgm
     private Fragment frgm_login;
     // // login Button
@@ -74,6 +83,27 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Http http = new Http();
+        Async async = new Async();
+
+
+        http.addUrl("http://waraliens.ddns.net/api/auth/")
+                .addBody("{\"mail\": \"test@test.fr\", \"password\": \"frafra\"}")
+                .setMethode(Http.Methode.POST);
+
+        try {
+            response = async.execute(http.build()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        Log.i("OKHTTP", response.getHeader("Authorization"));
+
+
+
 
         // toolBar
         toolbar = findViewById(R.id.toolbar);
@@ -119,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean connexion(String userName, String password) {
-        String url = "http://waraliens.ddns.net/api/user/";
+        String url = "http://waraliens.ddns.net/api/auth/";
 
         MyThread myThread = new MyThread();
 
