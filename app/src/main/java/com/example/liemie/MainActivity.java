@@ -15,10 +15,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import android.app.AlertDialog;
@@ -42,6 +42,9 @@ import okhttp3.OkHttpClient;
 
 
 public class MainActivity extends AppCompatActivity {
+    // mainActivity
+    private ProgressBar main_progressBar;
+
     // SharedPref
     public static final String PREF_NAME = "identifier";
     private SharedPreferences sharedPreferences;
@@ -78,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
     // // profil TextView
     private TextView profil_id;
 
+    // settings frgm
+    private Fragment frgm_settings;
+    // // settings Button
+    private Button settings_removeSharedPref;
+    // // settings switch
+    private Switch settings_darkSwitch;
+
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,9 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
         Log.i("OKHTTP", response.getHeader("Authorization"));
 
-
-
-
         // toolBar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -128,7 +136,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (login_email.length() > 2 && login_password.length() > 2) {
-                    connexion(login_email.getText().toString(), login_password.getText().toString());
+                    if (connexion(login_email.getText().toString(), login_password.getText().toString()) == false) {
+                        AlertMsg(getString(R.string.general_error), getString(R.string.login_connexionError));
+                    }
                 } else {
                     AlertMsg(getString(R.string.general_error), getString(R.string.login_entryError));
                 }
@@ -146,9 +156,63 @@ public class MainActivity extends AppCompatActivity {
         // profil frgm
         frgm_profil = (Fragment) getSupportFragmentManager().findFragmentById(R.id.profil_frgm);
         frgm_profil.getView().setVisibility(View.GONE);
+
+        // settings frgm
+        frgm_settings = (Fragment) getSupportFragmentManager().findFragmentById(R.id.settings_frgm);
+        frgm_settings.getView().setVisibility(View.GONE);
+        // settings Button
+        settings_removeSharedPref = (Button) frgm_settings.getView().findViewById(R.id.settings_removeSharedPref);
+        settings_removeSharedPref.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getString(R.string.general_warning)).setMessage(getString(R.string.settings_removeWarning));
+                builder.setPositiveButton(R.string.general_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.remove("username");
+                        editor.remove("password");
+                        editor.commit();
+                    }
+                });
+                builder.setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+        settings_darkSwitch = (Switch) frgm_settings.getView().findViewById(R.id.settings_darkSwitch);
+        if(Integer.valueOf(android.os.Build.VERSION.SDK) < 29) {
+            settings_darkSwitch.setEnabled(false);
+            settings_darkSwitch.setClickable(false);
+        }
+        else {
+            settings_darkSwitch.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (settings_darkSwitch.isChecked()) {
+
+                    }
+                    else {
+
+                    }
+                }
+            });
+        }
+
+        // mainActivity
+        main_progressBar = findViewById(R.id.main_progressBar);
+        main_progressBar.setVisibility(View.GONE);
     }
 
     private boolean connexion(String userName, String password) {
+        main_progressBar.setVisibility(View.VISIBLE);
+
         String url = "http://waraliens.ddns.net/api/auth/";
 
         MyThread myThread = new MyThread();
@@ -160,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
                 if (util.getString("mail").equals(userName) && util.getString("password").equals(password)) {
                     utilCourant = new Utilisateur(util.getInt("id"), util.getString("mail"), util.getString("password"));
                     InitConnexion();
-                    break;
+                    return true;
                 }
             }
         } catch (ExecutionException e) {
@@ -171,7 +235,8 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        return true;
+        main_progressBar.setVisibility(View.GONE);
+        return false;
     }
 
     public void InitConnexion() {
@@ -190,6 +255,8 @@ public class MainActivity extends AppCompatActivity {
         // // profil TextView
         profil_id = (TextView) frgm_profil.getView().findViewById(R.id.profil_id);
         profil_id.setText(utilCourant.getMail());
+
+        main_progressBar.setVisibility(View.GONE);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -210,6 +277,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void AlertMsg(String title, String msg) {
+        final AlertDialog alertDialog;
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
         builder.setTitle(title).setMessage(msg);
         builder.setPositiveButton(R.string.general_ok, new DialogInterface.OnClickListener() {
@@ -218,13 +286,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        AlertDialog alertDialog = builder.create();
+        alertDialog = builder.create();
         alertDialog.show();
     }
 
     public void HiddenAllFrgm() {
         frgm_profil.getView().setVisibility(View.GONE);
         frgm_login.getView().setVisibility(View.GONE);
+        frgm_settings.getView().setVisibility(View.GONE);
     }
 
     public void NoLogMenu() {
@@ -258,6 +327,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.action_settings:
+                HiddenAllFrgm();
+                frgm_settings.getView().setVisibility(View.VISIBLE);
+                return true;
             case R.id.action_profil:
                 HiddenAllFrgm();
                 frgm_profil.getView().setVisibility(View.VISIBLE);
@@ -266,7 +339,12 @@ public class MainActivity extends AppCompatActivity {
                 HiddenAllFrgm();
                 // semi-auto Connexion
                 if (sharedPreferences.getString("username", "") != "" && sharedPreferences.getString("password", "") != "") {
-                    connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("password", ""));
+                    if (connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("username", "")) == false) {
+                        AlertMsg(getString(R.string.general_error), getString(R.string.login_connexionError));
+                    }
+                    else {
+                        AlertMsg(getString(R.string.general_warning), getString(R.string.login_autoConnexion));
+                    }
                 }
                 else {
                     frgm_login.getView().setVisibility(View.VISIBLE);

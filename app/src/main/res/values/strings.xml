@@ -10,6 +10,7 @@
     <string name="general_ok">ok</string>
     <string name="general_cancel">cancel</string>
     <string name="general_error">Error</string>
+    <string name="general_warning">Warning</string>
 
     <string name="login_title">Login</string>
     <string name="login_mail">Mail</string>
@@ -17,14 +18,22 @@
     <string name="login_connect">Login</string>
     <string name="login_cancel">Cancel</string>
     <string name="login_entryError">Entries are not valid</string>
+    <string name="login_connexionError">Server or connection is unavailable</string>
+    <string name="login_offlineConnexion">Connection is offline</string>
+    <string name="login_autoConnexion">Auto Connection is on</string>
 
     <string name="profil_title">Profile</string>
     <string name="profil_idText">Login</string>
     <string name="profil_mdp">Password</string>
+
+    <string name="settings_title">Settings</string>
+    <string name="settings_autoConnexionOption">Clear user informations for auto connection</string>
+    <string name="settings_removeSharedPref">Remove user informations</string>
+    <string name="settings_removeWarning">The deletion of user information is irreversible</string>
+    <string name="settings_darkTheme">Dark theme</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>
-

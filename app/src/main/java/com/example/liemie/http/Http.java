@@ -44,7 +44,6 @@ public class Http {
     }
 
     public Http addCookie(String data) {
-
         return this;
     }
 

@@ -10,6 +10,7 @@
     <string name="general_ok">Ok</string>
     <string name="general_cancel">Annuler</string>
     <string name="general_error">Erreur</string>
+    <string name="general_warning">Attention</string>
 
     <string name="login_title">Connexion</string>
     <string name="login_mail">Mail</string>
@@ -17,10 +18,19 @@
     <string name="login_connect">Connexion</string>
     <string name="login_cancel">Annuler</string>
     <string name="login_entryError">Les entrées ne sont pas valides</string>
+    <string name="login_connexionError">Le serveur ou la connexion est indisponible</string>
+    <string name="login_offlineConnexion">La connexion est hors-ligne</string>
+    <string name="login_autoConnexion">l\'auto-connexion est allumée</string>
 
     <string name="profil_title">Profil</string>
     <string name="profil_idText">Identifiant</string>
     <string name="profil_mdp">Mot de passe</string>
+
+    <string name="settings_title">Réglages</string>
+    <string name="settings_autoConnexionOption">Supprimer toutes les informations utilisateurs utilisées pour la connexion automatique</string>
+    <string name="settings_removeSharedPref">Supprimer les informations utilisateur</string>
+    <string name="settings_removeWarning">La suppression des informations utilisateurs est irréversible</string>
+    <string name="settings_darkTheme">Thème sombre</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
