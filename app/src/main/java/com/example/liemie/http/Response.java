@@ -11,10 +11,16 @@ public class Response {
 
     private Headers headers;
     private String body;
+    private Integer code;
 
     public Response(okhttp3.Response response) throws IOException {
         setHeaders(response.headers());
         setBody(response.body());
+        setCode(response.code());
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public void setHeaders(Headers headers) {
@@ -23,6 +29,10 @@ public class Response {
 
     public void setBody(ResponseBody body) throws IOException {
         this.body = body.string();
+    }
+
+    public Integer getCode() {
+        return this.code;
     }
 
     public String getBody() {
