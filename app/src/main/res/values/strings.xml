@@ -21,6 +21,7 @@
     <string name="login_connexionError">Server or connection is unavailable</string>
     <string name="login_offlineConnexion">Connection is offline</string>
     <string name="login_autoConnexion">Auto Connection is on</string>
+    <string name="login_jsonError">JSON error</string>
 
     <string name="profil_title">Profile</string>
     <string name="profil_idText">Login</string>

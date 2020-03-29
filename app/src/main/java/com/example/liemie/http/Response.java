@@ -15,15 +15,14 @@ public class Response {
     public Response(okhttp3.Response response) throws IOException {
         setHeaders(response.headers());
         setBody(response.body());
-        Log.i("OKHTTP", response.body().string());
     }
 
     public void setHeaders(Headers headers) {
         this.headers = headers;
     }
 
-    public void setBody(ResponseBody body) {
-        this.body = body.toString();
+    public void setBody(ResponseBody body) throws IOException {
+        this.body = body.string();
     }
 
     public String getBody() {

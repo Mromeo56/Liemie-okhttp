@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.view.View;
@@ -21,6 +22,10 @@ import java.util.concurrent.ExecutionException;
 
 import android.os.Bundle;
 
+import com.example.liemie.http.Async;
+import com.example.liemie.http.Http;
+import com.example.liemie.http.Modele;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,24 +34,29 @@ public class RendezVousActivity extends AppCompatActivity {
 
     private ListView listView;
 
+    // modele
+    private Modele modele;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rendez_vous);
+
+        // listView
         listView = findViewById(R.id.rdv_listView);
         VisiteAdaptater arrayAdapter = new VisiteAdaptater(getApplicationContext(), getListeVisite());
         listView.setAdapter(arrayAdapter);
+
+        // modele
+        modele = new Modele();
+        AlertMsg("test", modele.getListeVisite());
     }
 
     public ArrayList<Visite> getListeVisite() {
         ArrayList<Visite> vRetour = new ArrayList<Visite>();
 
-        String url = "http://waraliens.ddns.net/api/visite/";
-
-        MyThread myThread = new MyThread();
-
-        try {
-            JSONArray lesVisites = new JSONArray(myThread.execute(url).get());
+        /*try {
+            JSONArray lesVisites = new JSONArray(modele.getListeVisite());
             for (int i = 0; i < lesVisites.length(); i++) {
                 JSONObject visite = lesVisites.getJSONObject(i);
                 Date date = null;
@@ -68,7 +78,7 @@ public class RendezVousActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        }*/
 
         return vRetour;
     }

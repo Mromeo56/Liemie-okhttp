@@ -2,7 +2,7 @@
     <string name="app_name">Liemie</string>
     <string name="action_profil">Profil</string>
     <string name="action_liste_rdv">Mes rendez-vous</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Paramètres</string>
     <string name="action_connexion">Connexion</string>
     <string name="action_import">Importer les données</string>
     <string name="action_export">Exporter les données</string>
@@ -21,6 +21,7 @@
     <string name="login_connexionError">Le serveur ou la connexion est indisponible</string>
     <string name="login_offlineConnexion">La connexion est hors-ligne</string>
     <string name="login_autoConnexion">l\'auto-connexion est allumée</string>
+    <string name="login_jsonError">erreur dans le JSON</string>
 
     <string name="profil_title">Profil</string>
     <string name="profil_idText">Identifiant</string>

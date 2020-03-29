@@ -32,6 +32,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.liemie.http.Async;
 import com.example.liemie.http.Http;
+import com.example.liemie.http.Modele;
 import com.example.liemie.http.Response;
 
 import org.json.JSONArray;
@@ -44,6 +45,9 @@ import okhttp3.OkHttpClient;
 public class MainActivity extends AppCompatActivity {
     // mainActivity
     private ProgressBar main_progressBar;
+
+    // modele
+    Modele modele;
 
     // SharedPref
     public static final String PREF_NAME = "identifier";
@@ -58,15 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem menuList;
     private MenuItem menuInfo;
 
-    // utilCourant
-    private Utilisateur utilCourant;
-
-    // OKHTTP
-    Http http = new Http();
-    Async async = new Async();
-
-    //Http
-    private Response response;
+    String token;
 
     // login frgm
     private Fragment frgm_login;
@@ -96,24 +92,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*Http http = new Http();
-        Async async = new Async();
-
-
-        http.addUrl("http://waraliens.ddns.net/api/auth/")
-                .addBody("{\"mail\": \"test@test.fr\", \"password\": \"frafra\"}")
-                .setMethode(Http.Methode.POST);
-
-        try {
-            response = async.execute(http.build()).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        Log.i("OKHTTP", response.getHeader("Authorization"));*/
-
         // toolBar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -137,7 +115,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (login_email.length() > 2 && login_password.length() > 2) {
-                    if (connexion(login_email.getText().toString(), login_password.getText().toString()) == false) {
+                    if (connexion(login_email.getText().toString(), login_password.getText().toString())) {
+                        InitConnexion();
+                    }
+                    else {
                         AlertMsg(getString(R.string.general_error), getString(R.string.login_connexionError));
                     }
                 } else {
@@ -209,72 +190,42 @@ public class MainActivity extends AppCompatActivity {
         // mainActivity
         main_progressBar = findViewById(R.id.main_progressBar);
         main_progressBar.setVisibility(View.GONE);
+
+        // modele
+        modele = new Modele();
     }
 
-    /*private boolean connexion(String userName, String password) {
+
+    public boolean connexion(String username, String password) {
         main_progressBar.setVisibility(View.VISIBLE);
-
-        String url = "http://waraliens.ddns.net/api/auth/";
-
-        MyThread myThread = new MyThread();
-
-        try {
-            JSONArray lesUtil = new JSONArray(myThread.execute(url).get());
-            for (int i = 0; i < lesUtil.length(); i++) {
-                JSONObject util = lesUtil.getJSONObject(i);
-                if (util.getString("mail").equals(userName) && util.getString("password").equals(password)) {
-                    utilCourant = new Utilisateur(util.getInt("id"), util.getString("mail"), util.getString("password"));
-                    InitConnexion();
-                    return true;
-                }
+        if(modele.Connexion(username, password)) {
+            // instantiate sharedPref
+            if (sharedPreferences.getString("username", "") == "" || sharedPreferences.getString("password", "") == "") {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("username", username);
+                editor.putString("password", password);
+                editor.commit();
             }
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
+            if (sharedPreferences.getString("Set-Cookie", "") == "") {
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("Set-Cookie", modele.getCookie());
+                editor.commit();
+            }
+            return true;
         }
 
         main_progressBar.setVisibility(View.GONE);
         return false;
-    }*/
-
-    public boolean connexion(String userName, String password) {
-        http.addUrl("http://192.168.1.32:8000/auth/")
-                .addBody("{\"mail\": \"" + userName + "\", \"password\": \"" + password + "\"}")
-                .setMethode(Http.Methode.POST);
-
-        try {
-            response = async.execute(http.build()).get();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        //Log.i("OKHTTP", response.getHeader("Authorization"));
-        AlertMsg("retour", response.getBody());
-
-        return false;
     }
 
     public void InitConnexion() {
-        // instantiate sharedPref
-        if(sharedPreferences.getString("username", "") == "" && sharedPreferences.getString("password", "") == "") {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("username", utilCourant.getMail());
-            editor.putString("password", utilCourant.getPassWord());
-            editor.commit();
-        }
-
         // hide function
         LogMenu();
         HiddenAllFrgm();
 
         // // profil TextView
         profil_id = (TextView) frgm_profil.getView().findViewById(R.id.profil_id);
-        profil_id.setText(utilCourant.getMail());
+        //profil_id.setText(utilCourant.getMail());
 
         main_progressBar.setVisibility(View.GONE);
     }
@@ -359,11 +310,12 @@ public class MainActivity extends AppCompatActivity {
                 HiddenAllFrgm();
                 // semi-auto Connexion
                 if (sharedPreferences.getString("username", "") != "" && sharedPreferences.getString("password", "") != "") {
-                    if (connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("username", "")) == false) {
-                        AlertMsg(getString(R.string.general_error), getString(R.string.login_connexionError));
+                    if (connexion(sharedPreferences.getString("username", ""), sharedPreferences.getString("username", ""))) {
+                        AlertMsg(getString(R.string.general_warning), getString(R.string.login_autoConnexion));
+                        InitConnexion();
                     }
                     else {
-                        AlertMsg(getString(R.string.general_warning), getString(R.string.login_autoConnexion));
+                        AlertMsg(getString(R.string.general_error), getString(R.string.login_connexionError));
                     }
                 }
                 else {

@@ -39,8 +39,8 @@ public class Http {
         return this;
     }
 
-    public Http addBody(String data) {
-        switch (this.methode) {
+    public Http addBody(String data, Methode methode) {
+        switch (methode) {
             case POST:
                 this.request.post(RequestBody.create(JSON, data));
                 break;
