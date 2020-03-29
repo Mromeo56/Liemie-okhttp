@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.liemie.MainActivity;
+import com.example.liemie.Patient;
 import com.example.liemie.R;
 import com.example.liemie.Visite;
 
@@ -62,6 +63,7 @@ public class Modele {
             JSONObject jsonObject = new JSONObject(json);
             if (jsonObject.getString("Auth").equals("Ok")) {
                 this.token = response.getHeader("Authorization");
+                Log.i("info", token);
                 this.cookie = response.getHeader("Set-Cookie");
                 return true;
             }
@@ -104,7 +106,43 @@ public class Modele {
                 int id = visite.getInt("id");
                 int id_patient = visite.getInt("id_patient");
                 int duree = visite.getInt("duree");
-                vRetour.add(new Visite(id, id_patient, date, duree));
+                vRetour.add(new Visite(id, id_patient, this.GetPatientById(id_patient).getPrenom(), date, duree));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return vRetour;
+    }
+
+    public Patient GetPatientById(int unId) {
+        Patient vRetour = null;
+
+        async = new Async();
+
+        http.addUrl("http://192.168.1.32:8000/patient/")
+                .addHeader("Authorization", token);
+
+        try {
+            response = async.execute(http.build()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            JSONArray lesPatients = new JSONArray(response.getBody());
+            for (int i = 0; i < lesPatients.length(); i++) {
+                JSONObject patient = lesPatients.getJSONObject(i);
+                if (patient.getInt("id") == unId) {
+                    int id = patient.getInt("id");
+                    String prenom = patient.getString("prenom");
+                    String nom = patient.getString("nom");
+                    int age = patient.getInt("age");
+                    vRetour = new Patient(id, nom, prenom, age);
+                    break;
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

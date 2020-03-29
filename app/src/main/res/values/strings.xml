@@ -22,6 +22,8 @@
     <string name="login_offlineConnexion">Connection is offline</string>
     <string name="login_autoConnexion">Auto Connection is on</string>
     <string name="login_jsonError">JSON error</string>
+    <string name="login_disconnect">Disconnect</string>
+    <string name="login_disconnectMessage">Do you really want to disconnect ?</string>
 
     <string name="profil_title">Profile</string>
     <string name="profil_idText">Login</string>
@@ -30,8 +32,10 @@
     <string name="settings_title">Settings</string>
     <string name="settings_autoConnexionOption">Clear user informations for auto connection</string>
     <string name="settings_removeSharedPref">Remove user informations</string>
-    <string name="settings_removeWarning">The deletion of user information is irreversible</string>
+    <string name="settings_removeWarning">The deletion of this information is irreversible</string>
     <string name="settings_darkTheme">Dark theme</string>
+    <string name="settings_removeCookie">Remove Cookie on local</string>
+    <string name="settings_cookieButton">Remove cookie</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

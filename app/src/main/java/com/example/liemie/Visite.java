@@ -7,12 +7,14 @@ public class Visite {
     private int idPatient;
     private Date date;
     private int duree;
+    private String prenomPatient;
 
-    public Visite(int unId, int unIdPatient, Date uneDate, int uneDuree) {
+    public Visite(int unId, int unIdPatient, String unPrenomPatient, Date uneDate, int uneDuree) {
         this.id = unId;
         this.idPatient = unIdPatient;
         this.date = uneDate;
         this.duree = uneDuree;
+        this.prenomPatient = unPrenomPatient;
     }
 
     public int getId() {
@@ -29,5 +31,9 @@ public class Visite {
 
     public int getDuree() {
         return this.duree;
+    }
+
+    public String getPrenomPatient() {
+        return this.prenomPatient;
     }
 }

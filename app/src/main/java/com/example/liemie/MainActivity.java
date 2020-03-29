@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -36,6 +37,7 @@ import com.example.liemie.http.Async;
 import com.example.liemie.http.Http;
 import com.example.liemie.http.Modele;
 import com.example.liemie.http.Response;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity {
     // SharedPref
     public static final String PREF_NAME = "identifier";
     private SharedPreferences sharedPreferences;
+
+    // fab
+    private FloatingActionButton fab;
 
     // toolBar
     private Toolbar toolbar;
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private Fragment frgm_settings;
     // // settings Button
     private Button settings_removeSharedPref;
+    private Button settings_removeCookie;
     // // settings switch
     private Switch settings_darkSwitch;
 
@@ -92,9 +98,6 @@ public class MainActivity extends AppCompatActivity {
     // // visite refresh
     private SwipeRefreshLayout visite_refresh;
 
-    private String token;
-
-
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +107,29 @@ public class MainActivity extends AppCompatActivity {
         // toolBar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // fab
+        fab = findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getString(R.string.login_disconnect)).setMessage(getString(R.string.login_disconnectMessage));
+                builder.setPositiveButton(R.string.general_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Disconnect();
+                    }
+                });
+                builder.setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
 
         // permissions
         checkPermission();
@@ -163,6 +189,30 @@ public class MainActivity extends AppCompatActivity {
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.remove("username");
                         editor.remove("password");
+                        editor.commit();
+                    }
+                });
+                builder.setNegativeButton(R.string.general_cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+        settings_removeCookie = (Button) frgm_settings.getView().findViewById(R.id.settings_removeCookie);
+        settings_removeCookie.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle(getString(R.string.general_warning)).setMessage(getString(R.string.settings_removeWarning));
+                builder.setPositiveButton(R.string.general_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.remove("Set-Cookie");
                         editor.commit();
                     }
                 });
@@ -259,6 +309,10 @@ public class MainActivity extends AppCompatActivity {
         main_progressBar.setVisibility(View.GONE);
     }
 
+    public void Disconnect() {
+
+    }
+
     public void RefreshVisiteList() {
         // // visite listView
         VisiteAdaptater arrayAdapter = new VisiteAdaptater(getApplicationContext(), modele.getListeVisite());
@@ -303,15 +357,8 @@ public class MainActivity extends AppCompatActivity {
         frgm_visite.getView().setVisibility(View.GONE);
     }
 
-    public void NoLogMenu() {
-        menuConnec.setVisible(true);
-        menuExport.setVisible(false);
-        menuImport.setVisible(false);
-        menuList.setVisible(false);
-        menuInfo.setVisible(false);
-    }
-
     public void LogMenu() {
+        fab.setVisibility(View.VISIBLE);
         menuConnec = toolbar.getMenu().findItem(R.id.action_connexion);
         menuExport = toolbar.getMenu().findItem(R.id.action_export);
         menuImport = toolbar.getMenu().findItem(R.id.action_import);

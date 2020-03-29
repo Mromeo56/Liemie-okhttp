@@ -60,7 +60,9 @@
         android:name="com.example.liemie.VisiteFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="55dp" />
+        android:layout_marginTop="55dp"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="center" />
 
     <ProgressBar
         android:id="@+id/main_progressBar"

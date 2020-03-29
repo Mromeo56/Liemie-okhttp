@@ -40,7 +40,6 @@ public class VisiteAdaptater extends android.widget.BaseAdapter{
     }
 
     private class ViewHolder {
-        TextView textViewVisite;
         TextView textViewPatient;
         TextView textViewDate;
         TextView textViewDuree;
@@ -52,7 +51,6 @@ public class VisiteAdaptater extends android.widget.BaseAdapter{
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = layoutInflater.inflate(R.layout.vue_rdv, null);
-            holder.textViewVisite = (TextView) convertView.findViewById(R.id.vuevisite);
             holder.textViewPatient = (TextView) convertView.findViewById(R.id.vuepatient);
             holder.textViewDate = (TextView) convertView.findViewById(R.id.vuedateprevue);
             holder.textViewDuree = (TextView) convertView.findViewById(R.id.vueduree);
@@ -61,20 +59,17 @@ public class VisiteAdaptater extends android.widget.BaseAdapter{
             holder = (ViewHolder) convertView.getTag();
         }
         /*****Affichage des propriétés dans la ligne de la listView ****/
-        holder.textViewVisite.setText("Visite ID : " + listVisite.get(position).getId() + ", ");
-        holder.textViewPatient.setText("Avec le patient : " + listVisite.get(position).getIdPatient() + ", ");
-        holder.textViewDate.setText("Date :"+ df.format("dd/MM/yyyy",listVisite.get(position).getDate()).toString().concat(" à ").concat(df.format("HH:mm",listVisite.get(position).getDate()).toString()));
-        holder.textViewDuree.setText("Durée : "+listVisite.get(position).getDuree()+" min");
+        holder.textViewPatient.setText("Visite avec " + listVisite.get(position).getPrenomPatient() + ", ");
+        holder.textViewDate.setText("Le "+ df.format("dd/MM/yyyy",listVisite.get(position).getDate()).toString().concat(" à ").concat(df.format("HH:mm",listVisite.get(position).getDate()).toString()));
+        holder.textViewDuree.setText("Pendant "+listVisite.get(position).getDuree()+" min");
 
         /********* COULEURS DU TEXTE DE LA LISTVIEW ******************/
-        holder.textViewVisite.setTextColor(Color.BLACK);
         holder.textViewPatient.setTextColor(Color.BLACK);
         holder.textViewDate.setTextColor(Color.BLACK);
         holder.textViewDuree.setTextColor(Color.BLACK);
 
 
         /******* Taille du texte de la listView ********************/
-        holder.textViewVisite.setTextSize(17);
         holder.textViewPatient.setTextSize(17);
         holder.textViewDate.setTextSize(17);
         holder.textViewDuree.setTextSize(17);
