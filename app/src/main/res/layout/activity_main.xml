@@ -52,6 +52,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <fragment
+        android:id="@+id/visite_frgm"
+        android:name="com.example.liemie.VisiteFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <ProgressBar
         android:id="@+id/main_progressBar"
         style="?android:attr/progressBarStyle"

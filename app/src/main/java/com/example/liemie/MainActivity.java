@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -62,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private MenuItem menuList;
     private MenuItem menuInfo;
 
-    String token;
-
     // login frgm
     private Fragment frgm_login;
     // // login Button
@@ -84,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
     private Button settings_removeSharedPref;
     // // settings switch
     private Switch settings_darkSwitch;
+
+    // visite frgm
+    private Fragment frgm_visite;
+    // // visite listView
+    private ListView visite_listview;
+
+    private String token;
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -187,6 +193,12 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        // visite frgm
+        frgm_visite = (Fragment) getSupportFragmentManager().findFragmentById(R.id.visite_frgm);
+        frgm_visite.getView().setVisibility(View.GONE);
+        // // visite listview
+        visite_listview = (ListView) frgm_visite.getView().findViewById(R.id.visite_listView);
+
         // mainActivity
         main_progressBar = findViewById(R.id.main_progressBar);
         main_progressBar.setVisibility(View.GONE);
@@ -226,6 +238,10 @@ public class MainActivity extends AppCompatActivity {
         // // profil TextView
         profil_id = (TextView) frgm_profil.getView().findViewById(R.id.profil_id);
         //profil_id.setText(utilCourant.getMail());
+
+        // // visite listView
+        VisiteAdaptater arrayAdapter = new VisiteAdaptater(getApplicationContext(), modele.getListeVisite());
+        visite_listview.setAdapter(arrayAdapter);
 
         main_progressBar.setVisibility(View.GONE);
     }
@@ -330,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.action_liste_rdv:
                 HiddenAllFrgm();
-                startActivity(new Intent(this, RendezVousActivity.class));
+                frgm_visite.getView().setVisibility(View.VISIBLE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
