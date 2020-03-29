@@ -38,25 +38,29 @@
         android:id="@+id/login_frgm"
         android:name="com.example.liemie.LoginFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp" />
 
     <fragment
         android:id="@+id/profil_frgm"
         android:name="com.example.liemie.ProfilFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp" />
 
     <fragment
         android:id="@+id/settings_frgm"
         android:name="com.example.liemie.SettingsFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp" />
 
     <fragment
         android:id="@+id/visite_frgm"
         android:name="com.example.liemie.VisiteFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp" />
 
     <ProgressBar
         android:id="@+id/main_progressBar"

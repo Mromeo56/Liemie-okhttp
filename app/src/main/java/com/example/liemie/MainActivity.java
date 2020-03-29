@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.liemie.http.Async;
 import com.example.liemie.http.Http;
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
     private Fragment frgm_visite;
     // // visite listView
     private ListView visite_listview;
+    // // visite refresh
+    private SwipeRefreshLayout visite_refresh;
 
     private String token;
 
@@ -198,6 +201,17 @@ public class MainActivity extends AppCompatActivity {
         frgm_visite.getView().setVisibility(View.GONE);
         // // visite listview
         visite_listview = (ListView) frgm_visite.getView().findViewById(R.id.visite_listView);
+        // // visite refresh
+        visite_refresh = (SwipeRefreshLayout) frgm_visite.getView();
+        visite_refresh.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        RefreshVisiteList();
+                        visite_refresh.setRefreshing(false);
+                    }
+                }
+        );
 
         // mainActivity
         main_progressBar = findViewById(R.id.main_progressBar);
@@ -240,10 +254,15 @@ public class MainActivity extends AppCompatActivity {
         //profil_id.setText(utilCourant.getMail());
 
         // // visite listView
-        VisiteAdaptater arrayAdapter = new VisiteAdaptater(getApplicationContext(), modele.getListeVisite());
-        visite_listview.setAdapter(arrayAdapter);
+        RefreshVisiteList();
 
         main_progressBar.setVisibility(View.GONE);
+    }
+
+    public void RefreshVisiteList() {
+        // // visite listView
+        VisiteAdaptater arrayAdapter = new VisiteAdaptater(getApplicationContext(), modele.getListeVisite());
+        visite_listview.setAdapter(arrayAdapter);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -281,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
         frgm_profil.getView().setVisibility(View.GONE);
         frgm_login.getView().setVisibility(View.GONE);
         frgm_settings.getView().setVisibility(View.GONE);
+        frgm_visite.getView().setVisibility(View.GONE);
     }
 
     public void NoLogMenu() {
