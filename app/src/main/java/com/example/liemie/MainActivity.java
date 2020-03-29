@@ -61,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
     // utilCourant
     private Utilisateur utilCourant;
 
-    // OkHttp
-    private OkHttpClient client;
+    // OKHTTP
+    Http http = new Http();
+    Async async = new Async();
 
     //Http
     private Response response;
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Http http = new Http();
+        /*Http http = new Http();
         Async async = new Async();
 
 
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Log.i("OKHTTP", response.getHeader("Authorization"));
+        Log.i("OKHTTP", response.getHeader("Authorization"));*/
 
         // toolBar
         toolbar = findViewById(R.id.toolbar);
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
         main_progressBar.setVisibility(View.GONE);
     }
 
-    private boolean connexion(String userName, String password) {
+    /*private boolean connexion(String userName, String password) {
         main_progressBar.setVisibility(View.VISIBLE);
 
         String url = "http://waraliens.ddns.net/api/auth/";
@@ -236,6 +237,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
         main_progressBar.setVisibility(View.GONE);
+        return false;
+    }*/
+
+    public boolean connexion(String userName, String password) {
+        http.addUrl("http://192.168.1.32:8000/auth/")
+                .addBody("{\"mail\": \"" + userName + "\", \"password\": \"" + password + "\"}")
+                .setMethode(Http.Methode.POST);
+
+        try {
+            response = async.execute(http.build()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //Log.i("OKHTTP", response.getHeader("Authorization"));
+        AlertMsg("retour", response.getBody());
+
         return false;
     }
 
