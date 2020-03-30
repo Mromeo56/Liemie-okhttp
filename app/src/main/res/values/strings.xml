@@ -43,6 +43,7 @@
     <string name="visite_patientAge">Patient\'s age</string>
     <string name="visite_patientAdress">Patient\'s address</string>
     <string name="visite_tel">Call</string>
+    <string name="visite_openGmaps">Go to</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

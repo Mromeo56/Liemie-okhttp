@@ -1,16 +1,15 @@
 package com.example.liemie;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,16 +32,12 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.liemie.http.Modele;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.osmdroid.api.IMapController;
-import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
-import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
 
 import java.io.File;
-import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -105,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     // // patient Button
     private Button patient_back;
     private Button patient_call;
+    private Button patient_goTo;
     // // patient MapView
     private MapView patient_mapAddress;
 
@@ -274,6 +270,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         patient_call = frgm_patient.getView().findViewById(R.id.visite_call);
+        patient_goTo = frgm_patient.getView().findViewById(R.id.visite_goTo);
         // // patient MapView
         org.osmdroid.config.IConfigurationProvider osmConf = org.osmdroid.config.Configuration.getInstance();
         File basePath = new File(getCacheDir().getAbsolutePath(), "osmdroid");
@@ -294,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Visite visite = (Visite) parent.getItemAtPosition(position);
-                Patient patient = (Patient) modele.GetPatientById(visite.getIdPatient());
+                final Patient patient = (Patient) modele.GetPatientById(visite.getIdPatient());
                 HiddenAllFrgm();
                 frgm_patient.getView().setVisibility(View.VISIBLE);
                 patient_name.setText(patient.getPrenom() + " " + patient.getNom());
@@ -306,6 +303,22 @@ public class MainActivity extends AppCompatActivity {
                 marker.setPosition(modele.GetGeoPointByAdress(patient.getAddress()));
                 mapController.setCenter(marker.getPosition());
                 patient_mapAddress.getOverlays().add(marker);
+                patient_goTo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Uri uri = Uri.parse("https://www.google.fr/maps/place/" + patient.getAddress().replace(' ', '+'));
+                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                        startActivity(intent);
+                    }
+                });
+                patient_call.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+                        phoneIntent.setData(Uri.parse("tel:" + patient.getNumTel()));
+                        startActivity(phoneIntent);
+                    }
+                });
             }
         });
         // // visite refresh
@@ -375,8 +388,14 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) == true && shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == true && shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) == true) {
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS) == true &&
+                    shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) == true &&
+                    shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE) == true &&
+                    shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE) == true) {
             } else {
                 askForPermission();
             }
@@ -387,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void askForPermission() {
-        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 2);
+        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CALL_PHONE}, 2);
     }
 
     public void AlertMsg(String title, String msg) {

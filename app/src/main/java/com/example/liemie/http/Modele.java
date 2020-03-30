@@ -136,7 +136,8 @@ public class Modele {
                     String nom = patient.getString("nom");
                     int age = patient.getInt("age");
                     String address = patient.getString("address");
-                    vRetour = new Patient(id, nom, prenom, age, address);
+                    String numTel = patient.getString("numtel");
+                    vRetour = new Patient(id, nom, prenom, age, address, numTel);
                     break;
                 }
             }

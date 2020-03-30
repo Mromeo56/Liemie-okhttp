@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.25" />
+        app:layout_constraintGuide_percent="0.15" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline13"
@@ -126,5 +126,16 @@
             android:layout_height="wrap_content" />
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/visite_goTo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/visite_openGmaps"
+        app:layout_constraintEnd_toStartOf="@+id/visite_call"
+        app:layout_constraintStart_toEndOf="@+id/visite_back"
+        app:layout_constraintTop_toTopOf="@+id/guideline14" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
