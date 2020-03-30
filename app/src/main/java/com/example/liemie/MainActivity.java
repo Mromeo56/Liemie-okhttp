@@ -2,17 +2,19 @@ package com.example.liemie;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -21,11 +23,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.concurrent.ExecutionException;
-
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,17 +30,19 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.example.liemie.http.Async;
-import com.example.liemie.http.Http;
 import com.example.liemie.http.Modele;
-import com.example.liemie.http.Response;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.osmdroid.api.IMapController;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
 
-import okhttp3.OkHttpClient;
+import java.io.File;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -98,6 +97,17 @@ public class MainActivity extends AppCompatActivity {
     // // visite refresh
     private SwipeRefreshLayout visite_refresh;
 
+    // patient frgm
+    private Fragment frgm_patient;
+    // // patient TextView
+    private TextView patient_name;
+    private TextView patient_age;
+    // // patient Button
+    private Button patient_back;
+    private Button patient_call;
+    // // patient MapView
+    private MapView patient_mapAddress;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +117,9 @@ public class MainActivity extends AppCompatActivity {
         // toolBar
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        // modele
+        modele = new Modele();
 
         // fab
         fab = findViewById(R.id.fab);
@@ -136,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
 
         // SharedPref Init
         sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
-
 
         // login frgm
         frgm_login = (Fragment) getSupportFragmentManager().findFragmentById(R.id.login_frgm);
@@ -246,11 +258,56 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        // patient frgm
+        frgm_patient = (Fragment) getSupportFragmentManager().findFragmentById(R.id.patient_frgm);
+        frgm_patient.getView().setVisibility(View.GONE);
+        // patient TextView
+        patient_name = frgm_patient.getView().findViewById(R.id.visite_patientName);
+        patient_age = frgm_patient.getView().findViewById(R.id.visite_patientAge);
+        // // patient Button
+        patient_back = frgm_patient.getView().findViewById(R.id.visite_back);
+        patient_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                HiddenAllFrgm();
+                frgm_visite.getView().setVisibility(View.VISIBLE);
+            }
+        });
+        patient_call = frgm_patient.getView().findViewById(R.id.visite_call);
+        // // patient MapView
+        org.osmdroid.config.IConfigurationProvider osmConf = org.osmdroid.config.Configuration.getInstance();
+        File basePath = new File(getCacheDir().getAbsolutePath(), "osmdroid");
+        osmConf.setOsmdroidBasePath(basePath);
+        File tileCache = new File(osmConf.getOsmdroidBasePath().getAbsolutePath(), "tile");
+        osmConf.setOsmdroidTileCache(tileCache);
+        patient_mapAddress = (MapView) frgm_patient.getView().findViewById(R.id.visite_patientAddress);
+        patient_mapAddress.setTileSource(TileSourceFactory.MAPNIK);
+        patient_mapAddress.setBuiltInZoomControls(false);
+        patient_mapAddress.setMultiTouchControls(true);
+
         // visite frgm
         frgm_visite = (Fragment) getSupportFragmentManager().findFragmentById(R.id.visite_frgm);
         frgm_visite.getView().setVisibility(View.GONE);
         // // visite listview
         visite_listview = (ListView) frgm_visite.getView().findViewById(R.id.visite_listView);
+        visite_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Visite visite = (Visite) parent.getItemAtPosition(position);
+                Patient patient = (Patient) modele.GetPatientById(visite.getIdPatient());
+                HiddenAllFrgm();
+                frgm_patient.getView().setVisibility(View.VISIBLE);
+                patient_name.setText(patient.getPrenom() + " " + patient.getNom());
+                patient_age.setText(patient.getAge() + " Ans");
+
+                MapController mapController = (MapController) patient_mapAddress.getController();
+                mapController.setZoom(15);
+                Marker marker = new Marker(patient_mapAddress);
+                marker.setPosition(modele.GetGeoPointByAdress(patient.getAddress()));
+                mapController.setCenter(marker.getPosition());
+                patient_mapAddress.getOverlays().add(marker);
+            }
+        });
         // // visite refresh
         visite_refresh = (SwipeRefreshLayout) frgm_visite.getView();
         visite_refresh.setOnRefreshListener(
@@ -266,9 +323,6 @@ public class MainActivity extends AppCompatActivity {
         // mainActivity
         main_progressBar = findViewById(R.id.main_progressBar);
         main_progressBar.setVisibility(View.GONE);
-
-        // modele
-        modele = new Modele();
     }
 
 
@@ -354,6 +408,7 @@ public class MainActivity extends AppCompatActivity {
         frgm_profil.getView().setVisibility(View.GONE);
         frgm_login.getView().setVisibility(View.GONE);
         frgm_settings.getView().setVisibility(View.GONE);
+        frgm_patient.getView().setVisibility(View.GONE);
         frgm_visite.getView().setVisibility(View.GONE);
     }
 

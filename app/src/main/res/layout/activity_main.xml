@@ -64,6 +64,13 @@
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="center" />
 
+    <fragment
+        android:id="@+id/patient_frgm"
+        android:name="com.example.liemie.PatientFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="55dp" />
+
     <ProgressBar
         android:id="@+id/main_progressBar"
         style="?android:attr/progressBarStyle"

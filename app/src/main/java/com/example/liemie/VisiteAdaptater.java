@@ -51,6 +51,7 @@ public class VisiteAdaptater extends android.widget.BaseAdapter{
         if (convertView == null) {
             holder = new ViewHolder();
             convertView = layoutInflater.inflate(R.layout.vue_rdv, null);
+            convertView.setBackgroundResource(R.color.colorPrimaryDark);
             holder.textViewPatient = (TextView) convertView.findViewById(R.id.vuepatient);
             holder.textViewDate = (TextView) convertView.findViewById(R.id.vuedateprevue);
             holder.textViewDuree = (TextView) convertView.findViewById(R.id.vueduree);
@@ -58,6 +59,7 @@ public class VisiteAdaptater extends android.widget.BaseAdapter{
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         /*****Affichage des propriétés dans la ligne de la listView ****/
         holder.textViewPatient.setText("Visite avec " + listVisite.get(position).getPrenomPatient() + ", ");
         holder.textViewDate.setText("Le "+ df.format("dd/MM/yyyy",listVisite.get(position).getDate()).toString().concat(" à ").concat(df.format("HH:mm",listVisite.get(position).getDate()).toString()));

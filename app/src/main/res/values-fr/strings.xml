@@ -11,6 +11,7 @@
     <string name="general_cancel">Annuler</string>
     <string name="general_error">Erreur</string>
     <string name="general_warning">Attention</string>
+    <string name="general_return">Retour</string>
 
     <string name="login_title">Connexion</string>
     <string name="login_mail">Mail</string>
@@ -36,6 +37,12 @@
     <string name="settings_darkTheme">Thème sombre</string>
     <string name="settings_removeCookie">Supprimer les cookie en local</string>
     <string name="settings_cookieButton">Supprimer les cookie</string>
+
+    <string name="visite_title">Visite</string>
+    <string name="visite_patientName">Nom du patient</string>
+    <string name="visite_patientAge">Age du patient</string>
+    <string name="visite_patientAdress">Adresse du patient</string>
+    <string name="visite_tel">Appeler</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

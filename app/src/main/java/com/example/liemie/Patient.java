@@ -5,12 +5,14 @@ public class Patient {
     private String nom;
     private String prenom;
     private int age;
+    private String address;
 
-    public Patient (int unId, String unNom, String unPrenom, int unAge) {
+    public Patient (int unId, String unNom, String unPrenom, int unAge, String uneAddress) {
         this.id = unId;
         this.nom = unNom;
         this.prenom = unPrenom;
         this.age = unAge;
+        this.address = uneAddress;
     }
 
     public int getId() {
@@ -27,6 +29,10 @@ public class Patient {
 
     public int getAge() {
         return this.age;
+    }
+
+    public String getAddress() {
+        return this.address;
     }
 }
 

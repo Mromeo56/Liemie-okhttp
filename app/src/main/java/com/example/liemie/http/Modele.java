@@ -1,19 +1,14 @@
 package com.example.liemie.http;
 
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.util.Log;
 
-import com.example.liemie.MainActivity;
 import com.example.liemie.Patient;
-import com.example.liemie.R;
 import com.example.liemie.Visite;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.osmdroid.util.GeoPoint;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -140,9 +135,41 @@ public class Modele {
                     String prenom = patient.getString("prenom");
                     String nom = patient.getString("nom");
                     int age = patient.getInt("age");
-                    vRetour = new Patient(id, nom, prenom, age);
+                    String address = patient.getString("address");
+                    vRetour = new Patient(id, nom, prenom, age, address);
                     break;
                 }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return vRetour;
+    }
+
+    public GeoPoint GetGeoPointByAdress(String address) {
+
+        GeoPoint vRetour = null;
+
+        async = new Async();
+
+        String formattedAddress = address.replace(' ', '+');
+
+        http.addUrl("http://nominatim.openstreetmap.org/search?q=" + formattedAddress + "&format=json");
+
+        try {
+            response = async.execute(http.build()).get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            JSONArray lesBatiments = new JSONArray((response.getBody()));
+            for (int i= 0; i < lesBatiments.length(); i++) {
+                JSONObject batiment = lesBatiments.getJSONObject(i);
+                vRetour = new GeoPoint(Double.parseDouble(batiment.getString("lat")), Double.parseDouble(batiment.getString("lon")));
             }
         } catch (JSONException e) {
             e.printStackTrace();

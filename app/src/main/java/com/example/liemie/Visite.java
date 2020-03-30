@@ -1,5 +1,7 @@
 package com.example.liemie;
 
+import com.example.liemie.http.Modele;
+
 import java.util.Date;
 
 public class Visite {
